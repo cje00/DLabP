@@ -81,14 +81,36 @@ article_list
 
 # (방법 1) list로 만들어 pd.DataFrame()으로 표 전환 
 
-# In[75]:
+#  <span class="press_news_text">
+#  <strong>'고만고만하면 도태'…멤버십 '옥석 가리기' 시작됐다</strong>
+#  <span class="press_news_datetime">06월 14일 07:51</span
+
+# In[78]:
 
 
 news_title_list = []
 for i in article_list:
-    news_title_list.append(i.text.replace('\n',''))
+    news_title_list.append(i.find('strong').text.replace('\n',''))
         
 news_title_list        
+
+
+# In[103]:
+
+
+# <span class="press_news_text">
+# <strong>'고만고만하면 도태'…멤버십 '옥석 가리기' 시작됐다</strong>
+# <span class="press_news_datetime">06월 14일 07:51</span>
+# date 
+
+news_date_list = []
+# for i in bs_obj.find_all('span', {'class':'press_news_datetime'}):
+for i in bs_obj.find_all('span',{'class': 'press_news_datetime'}):
+    print(i.text)
+    news_date_list.append(i.text)
+
+print('Length of the list -> ',len(news_date_list))
+news_date_list
 
 
 # In[34]:
@@ -101,6 +123,12 @@ for i in article_list:
 news_link_list
 
 
+# In[ ]:
+
+
+
+
+
 # In[76]:
 
 
@@ -110,7 +138,7 @@ df = pd.DataFrame()
 df
 
 
-# In[77]:
+# In[83]:
 
 
 # 리스트를 만들고 이를 데이터 프레임으로 전환 
@@ -119,7 +147,7 @@ news_headline_list = []
 news_link_list = []
 
 for i in article_list:
-    news_headline_list.append(i.text.replace('\n',''))
+    news_headline_list.append(i.select('strong')[0].text.replace('\n',''))
     news_link_list.append(i.select('a')[0].get('href'))
     
 df = pd.DataFrame({'head line':news_headline_list, 'news link':news_link_list})
@@ -139,7 +167,7 @@ df
 # col = df.columns
 # 
 
-# In[41]:
+# In[89]:
 
 
 header = ['headline', 'link']
@@ -155,7 +183,7 @@ col = df.columns
 #     df = df.append(row, ignore_index=True)
 # 
 
-# In[66]:
+# In[90]:
 
 
 # 앞에서 만든 df 비우기
@@ -164,7 +192,7 @@ df.drop(df.index, inplace=True)
 df
 
 
-# In[67]:
+# In[91]:
 
 
 arr = []
@@ -173,7 +201,7 @@ for article in bs_obj.find_all('li', {'class': 'press_news_item'}):
     #print(article.find("strong").text)
     # row = pd.Series([article.find("strong").text, article.select_one('a').get('href')], index = col)
     dataframe1 = df.append(row, ignore_index = True)
-    row = pd.Series([article.text.replace('\n',''), article.select_one('a').get('href')], index = col)
+    row = pd.Series([article.find('strong').text.replace('\n',''), article.select_one('a').get('href')], index = col)
     df = df.append(row, ignore_index = True)
                                
 df
